@@ -5,7 +5,7 @@ $envConf = [
 # App
     'base_url' => [
         'scheme' => 'http',
-        'host' => 'sample.local',
+        'host' => 'single.local',
         'path' => '/',
     ],
 # -----------------------------------------------------------------------------
@@ -18,6 +18,15 @@ $envConf = [
     'forceCopyAssets' => false,
     'globalCacheTime' => 0,
     'sessionTimeout' => 0,
+# -----------------------------------------------------------------------------
+# Databases
+    'DB' => [
+        'dsn' => 'mysql:host=127.0.0.1;port=3306;dbname=single',
+        'user' => 'root',
+        'pass' => '123456',
+        'tablePrefix' => '',
+        'schemaCacheTime' => 1200,
+    ],
 # -----------------------------------------------------------------------------
 ];
 

@@ -17,7 +17,7 @@ class ThemeAsset extends AssetBundle
     ];
     public $depends = [
         'yii\web\YiiAsset',
-        'yii\bootstrap\BootstrapPluginAsset',
+        'yii\bootstrap4\BootstrapPluginAsset',
 //        'rabint\assets\Bootstrap4RtlAsset',
         'rabint\assets\CommonAsset',
         'rabint\assets\font\VazirAsset',

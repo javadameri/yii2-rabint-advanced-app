@@ -4,7 +4,7 @@ namespace app\widgets;
 use \app\modules\event\models\Event;
 use Yii;
 
-class EventWidget extends \yii\bootstrap\Widget
+class EventWidget extends \yii\bootstrap4\Widget
 {
     const ORDER_LATEST = 'latest';
 
