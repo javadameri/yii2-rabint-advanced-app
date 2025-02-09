@@ -4,7 +4,7 @@ $baseConf = [
 # -----------------------------------------------------------------------------
 # App
     'app_id' => "rabint_app",
-    'app_name' => "داشبورد",
+    'app_name' => "بلیت اینجا",
     'app_token' => "baseApp:DARiRpRi64UM58v8TvAqt9QAqt9AZWqLpunHUFaDUrRWViNF",
     'base_url' => [
         'scheme' => 'http',
@@ -14,9 +14,12 @@ $baseConf = [
     'sourceLanguage' => 'fa-IR',
     'language' => 'fa-IR',
     'timeZone' => 'Asia/Tehran',
-    'themePath' => '@app/themes/fatehin',
-    'backendThemePath' => '@rabint/themes/codebase',
-    'panelThemePath' => '@app/themes/fatehin',
+//    'themePath' => '@rabint/themes/codebase',
+//    'backendThemePath' => '@rabint/themes/codebase',
+//    'panelThemePath' => '@rabint/themes/codebase',
+    'themePath' => '@rabint/themes/bilit',
+    'backendThemePath' => '@rabint/themes/bilit',
+    'panelThemePath' => '@rabint/themes/bilit',
     'adminEmail' => 'admin@.rabint.ir',
     'noreplyEmail' => 'noreply@rabint@.ir',
     'maintenanceMode' => false,

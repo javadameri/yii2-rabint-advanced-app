@@ -4,7 +4,7 @@ return [
 # -----------------------------------------------------------------------------
 # App
     'app_id' => "rabint_app",
-    'app_name' => "sample app",
+    'app_name' => "بلیت اینجا",
     'app_token' => "baseApp:DARiRpRi64UM58v8TvAqt9QAqt9AZWqLpunHUFaDUrRWViNF",
     'base_url' => [
         'scheme' => 'http',
@@ -14,7 +14,8 @@ return [
     'sourceLanguage' => 'fa-IR',
     'language' => 'fa-IR',
     'timeZone' => 'Asia/Tehran',
-    'themePath' => '@app/themes/essential',
+//    'themePath' => '@vendor/rabint/theme-coreui',
+    'themePath' => '@app/themes/bilit',
     'backendThemePath' => '@vendor/rabint/theme-coreui',
     'panelThemePath' => '@vendor/rabint/theme-coreui',
     'adminEmail' => 'admin@rabint.ir',

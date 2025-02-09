@@ -1,8 +1,7 @@
-Options +FollowSymLinks
-IndexIgnore */*
-
-<IfModule mod_rewrite.c>
-    RewriteEngine on
-    RewriteRule    ^$    app/web/    [L]
-    RewriteRule    (.*) app/web/$1    [L]
-</IfModule>
+RewriteEngine on
+RewriteCond $1 !^(index\.php|font|css|js|images|img|thumbs|captcha|robots\.txt)
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)$ index.php?/$1 [L,QSA]
+#php_flag safe_mode Off
+#Options All -Indexes

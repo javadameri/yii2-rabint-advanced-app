@@ -359,3 +359,84 @@ function prf($str,$filename='flog.log',$filepath=null,$separator="\n"){
     $comment = date("Y-m-d H:i:s") . " | " . $str . "\n";
     return file_put_contents($filepath, $comment, FILE_APPEND);
 }
+
+function requestPay($amount,$callBackUrl,$payerId,$pin='')
+{
+    $er='';
+    $rest=array('status'=>'','au'=>'');
+    $url = 'https://pec.shaparak.ir/NewIPGServices/Sale/SaleService.asmx';
+    $soapclient = new SoapClient($url . '?WSDL', array('trace' => 1, 'location' => $url));
+    $ClientSalePaymentRequestData = new stdClass();
+    $amount = intval($amount);
+    $ClientSalePaymentRequestData->requestData->LoginAccount =$pin; // 'w85a22EEYRqt27jYM2Yx';
+    $ClientSalePaymentRequestData->requestData->Amount = $amount;
+    $ClientSalePaymentRequestData->requestData->OrderId = $payerId;
+    $ClientSalePaymentRequestData->requestData->CallBackUrl = $callBackUrl;
+    $ClientSalePaymentRequestData->requestData->AdditionalData = $payerId;
+//    var_dump($ClientSalePaymentRequestData);
+
+    $res = $soapclient->SalePaymentRequest($ClientSalePaymentRequestData);
+    if($res)
+    {
+        if(isset($res->SalePaymentRequestResult->Status) && $res->SalePaymentRequestResult->Status == 0)
+        {
+            $rest['status'] = $res->SalePaymentRequestResult->Status;
+            $rest['au'] = $res->SalePaymentRequestResult->Token;
+        }
+        else
+        {
+            $rest['status'] = $res->SalePaymentRequestResult->Status;
+            $rest['au'] = $res->SalePaymentRequestResult->Token;
+            $er = $res->SalePaymentRequestResult->Message;
+        }
+    }
+    else
+    {
+        $rest['status'] = 0;
+        $rest['au'] = 0;
+    }
+    $result=array(
+        'eror'=>$er,
+        'res'=>$rest
+    );
+    return $result;
+}
+
+function getTokenSaman($sep_MID,$sep_Amount,$sep_ResNum,$sep_RedirectURL,$sep_Cellphone)
+{
+    $param = array(
+        'action' => 'token',
+        'TerminalId' => $sep_MID,
+        'RedirectUrl' => $sep_RedirectURL,
+        'ResNum' => $sep_ResNum,
+        'Amount' => $sep_Amount,
+        'CellNumber' => $sep_Cellphone,
+    );
+    $url='https://sep.shaparak.ir/MobilePG/MobilePayment';
+    $data = http_build_query($param);
+    $curl = curl_init();
+    curl_setopt_array($curl, array(
+        CURLOPT_URL            => $url,
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_ENCODING       => "",
+        CURLOPT_POSTFIELDS     => $data,
+        CURLOPT_MAXREDIRS      => 30,
+        CURLOPT_FRESH_CONNECT      => true,
+        CURLOPT_TIMEOUT        => 10,
+        CURLOPT_HTTP_VERSION   => CURL_HTTP_VERSION_1_1,
+        CURLOPT_CUSTOMREQUEST  => 'POST',
+        CURLOPT_CONNECTTIMEOUT     => 200,
+    ));
+    $response = curl_exec($curl);
+//    var_dump($response);
+//    exit;
+    //$err      = curl_error($curl);
+    if($data = json_decode($response))
+    {
+        if(isset($data->status) && intval($data->status) == 1 && strlen($data->token) > 0)
+        {
+            return $data->token;
+        }
+    }
+    return false;
+}

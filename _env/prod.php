@@ -20,9 +20,9 @@ $envConf = [
 # -----------------------------------------------------------------------------
 # Databases
     'DB' => [
-        'dsn' => 'mysql:host=79.143.85.188;port=33070;dbname=maindb',
-        'user' => 'db_user',
-        'pass' => 'rwrwasdasdasd@123',
+        'dsn' => 'mysql:host=localhost;port=3306;dbname=blitinja_adminsub',
+        'user' => 'blitinja_adminsub',
+        'pass' => 'xr4x8RPus4t2X8dsGpWf',
         'tablePrefix' => '',
         'schemaCacheTime' => 1200,
     ],

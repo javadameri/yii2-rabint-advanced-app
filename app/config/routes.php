@@ -2,7 +2,7 @@
 
 
 return [
-    '' => 'site/index',
+    '' => 'admin',
     /* user ------------------------------------------------ */
     '/events'=>'/event/event',
     'login'=>'/user/sign-in/login',

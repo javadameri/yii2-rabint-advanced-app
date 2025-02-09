@@ -1,33 +1,31 @@
-# Ides project files
-.idea
-nbproject
-.vscode
-.buildpath
-.project
-.settings
-env.php
-# windows thumbnail cache
-Thumbs.db
-
-/_bk
-# composer vendor dir
-/vendor
-
-# composer itself is not needed
-composer.phar
-
-# Mac DS_Store Files
 .DS_Store
 
-# phpunit itself is not needed
-phpunit.phar
-# local phpunit config
-/phpunit.xml
+application/cache/*
+!application/cache/index.html
 
-tests/_output/*
-tests/_support/_generated
+application/logs/*
+!application/logs/index.html
 
-#vagrant folder
-/.vagrant
-*.lock
-/env.php
+!application/*/.htaccess
+
+composer.lock
+
+user_guide_src/build/*
+user_guide_src/cilexer/build/*
+user_guide_src/cilexer/dist/*
+user_guide_src/cilexer/pycilexer.egg-info/*
+/vendor/
+
+# IDE Files
+#-------------------------
+/nbproject/
+.idea/*
+
+## Sublime Text cache files
+*.tmlanguage.cache
+*.tmPreferences.cache
+*.stTheme.cache
+*.sublime-workspace
+*.sublime-project
+/tests/tests/
+/tests/results/

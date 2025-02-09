@@ -28,4 +28,7 @@ return [
     'stats' => [
         'class' => 'rabint\stats\stats',
     ],
+    'api' => [
+        'class' => 'app\modules\api\Module',
+    ],
 ];
