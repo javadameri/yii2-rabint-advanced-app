@@ -504,7 +504,7 @@ class PublicController extends Controller
             $payment->save(false);
             if ($payments = $payment->paymentID)
             {
-                Payments::paybank($insertpay,$infodargah,$allpay->fprice,'/','flights/payback/'.$allpay->payID,$payments,$allpay->mobile);
+                Payments::paybank($insertpay,$infodargah,$allpay->fprice,'/',Url::to(['/api/public/payback',"verify"=>$allpay->payID,"id"=>$payments]),$payments,$allpay->mobile);
             }else
             {
 //                $this->session->set_flashdata('msgER', 'خطا در اتصال به درگاه بانک  لطفا دوباره تلاش کنید .');
@@ -515,5 +515,52 @@ class PublicController extends Controller
 
         exit('asdasd333');
     }
+
+
+    function actionPayback($verify,$id)
+    {
+
+        if ($id=='')
+            exit();
+
+//        $this->load->model('main_model');
+        $id=trim(filter_var($id,FILTER_SANITIZE_NUMBER_INT));
+        $POST=$_POST;
+        $GET=$_GET;
+        $REQUEST=$_REQUEST;
+        if($payment=Payments::paymentresivebank('sell',$id,$REQUEST,$POST,$GET))
+        {
+//            $pay = $this->base_model->get_st('payments', array('paymentID' => $id), 'payment_rand,peymentAmountD');
+            $pay = Payments::findOne($id);
+
+            if ($pay->payment_rand == 'flight' )
+            {
+                $insertOrder2 = array(
+                    "pay_status" => 1 ,
+                );
+                Tickets::updateAll($insertOrder2,['id' => $pay->peymentAmountD]);
+//                $this->base_model->update_entry('irtour_tickets', $insertOrder2, array('id' => $pay->peymentAmountD ));
+                Payments::maketicket($pay->peymentAmountD);
+            }
+
+//            $this->session->set_flashdata('msgER', 'پرداخت موفق');
+            $url  = ['/flight-in-tickets/order/ticket-successfull',"verify"=>$verify,"peymentID"=>$pay->peymentAmountD];
+            redirect($url);
+            exit;
+        }
+        else
+        {
+//            $pay = $this->base_model->get_st('payments', array('paymentID' => $id), 'peymentAmountD');
+            $pay = Payments::findOne($id);
+//            $this->session->set_flashdata('msgER', 'پرداخت ناموفق دوباره تلاش کنید');
+//            redirect(base_url('flights/ticket/'.$verify.'/'.$pay->peymentAmountD));
+
+            $url  = 'http://192.168.1.13/flight-in-tickets/order/ticket-unsuccessfull?verify='.$verify.'&peymentID='.$pay->peymentAmountD;
+            redirect($url);
+//            return $this->redirect($url);
+            exit;
+        }
+    }
+
 
 }

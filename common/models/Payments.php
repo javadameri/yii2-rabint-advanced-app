@@ -2,6 +2,8 @@
 
 namespace common\models;
 
+use app\components\f724;
+use app\components\StaticData;
 use Yii;
 use yii\helpers\Url;
 
@@ -118,7 +120,7 @@ class Payments extends \yii\db\ActiveRecord
 //            redirect(base_url() . $Erurler);
         }else
         {
-            $callBackUrl = Url::base(). $BackUrl .'/' . $payments;
+            $callBackUrl = Url::base(true). $BackUrl;
 
             if($insert['bank_name']=='melat')
             {
@@ -186,13 +188,8 @@ class Payments extends \yii\db\ActiveRecord
                     'payment_describes' => ' وضعیت  : اتصال به درگاه  ' ,
                 );
 
-                $m = Payments::findOne($payments);
-                $m->paymentCode = $update["paymentCode"];
-                $m->payment_au = $update["payment_au"];
-                $m->requestPay = $update["requestPay"];
-                $m->payment_urlback = $update["payment_urlback"];
-                $m->payment_describes = $update["payment_describes"];
-                $m->save();
+                Payments::updateAll($update,["paymentID"=>$payments]);
+
 
                 $sep_MID	 		= $userNameSman;
                 $sep_Amount 		= $peymentAmount;
@@ -240,5 +237,166 @@ class Payments extends \yii\db\ActiveRecord
 
         }
     }
+
+    public static function paymentresivebank($type,$id,$REQUEST,$POST)
+    {
+        $id=trim(filter_var($id,FILTER_SANITIZE_NUMBER_INT));
+        if($payment =Payments::findOne(['paymentID'=>$id,'paymentType' => $type]))
+        {
+            if($payment->bank_name=='saman')
+            {
+                $BankSaman=$payment->paymentCode;
+                $melatup=explode(',',$BankSaman);
+                $userNameSman=$melatup[0];
+                $userPasswordsaman=$melatup[1];
+
+                $RefId = $POST['RefNum'];
+                $ResCode = $POST['ResNum'];
+                $saleOrderId = $POST['ResNum'];
+
+                $RefId=filter_var($RefId, FILTER_SANITIZE_STRING);
+                $ResCode=filter_var($ResCode, FILTER_SANITIZE_NUMBER_INT);
+                $saleOrderId=filter_var($saleOrderId, FILTER_SANITIZE_NUMBER_INT);
+
+//                $isnew=$this->base_model->get_st_array('payments',array('paymentcodesale'=>$RefId,'bank_name'=>'saman'),'*');
+                $isnew = Payments::find()->where(['paymentcodesale'=>$RefId,'bank_name'=>'saman'])->asArray()->all();
+
+                $status['PayPrice']=0;
+                $status['refID']=$RefId;
+
+                if(!$isnew&&isset($POST['State']) && $POST['State'] == "OK"&&$POST['StateCode'] == "0"&&$RefId&&$payment->paymentID==$saleOrderId)
+                {
+//                    $this->load->helper('saman');
+                    $status = requestVer($RefId, $userPasswordsaman,$userNameSman,$payment->peymentAmount);
+
+                    if ($status['res'][0] == '0'&&$status['code'] == true)
+                    {
+                        $updatePayment = array(
+                            "paymentDate" => time(),
+                            "payment_status" => 1,
+                            "payOnlineV" => $ResCode,
+                            "requestVer" => $status['res'][0],
+                            "payment_rs" => $status['res'][0],
+                            "paymentcodesale" => $RefId,
+                            'payment_describes'=>$payment->payment_describes.'<br>'.'- er تایید پرداخت :'.$status['er'].' -- '. $status['refID'].' - نتیجه تایید :'.$status['res'][0].' - '.$ResCode.'ORDERID'.$saleOrderId,
+                        );
+                        Payments::updateAll($updatePayment,['paymentID'=>$id]);
+//                        $this->base_model->update_entry('payments',$updatePayment,array('paymentID'=>$id));
+                        return $payment;
+
+                    }else
+                    {
+                        $updatePayment = array(
+                            "paymentDate" => time(),
+                            "payOnlineV" => $ResCode,
+                            "requestVer" => $status['res'][1],
+                            "paymentcodesale" => $RefId,
+                            'payment_describes'=>$payment->payment_describes.'<br>'.'- er تایید پرداخت :'.$status['er'].' - نتیجه تایید :'.$status['res'][0].' - '.$ResCode,
+                        );
+                        Payments::updateAll($updatePayment,['paymentID'=>$saleOrderId]);
+//                        $this->base_model->update_entry('payments', $updatePayment, array("paymentID" => $saleOrderId));
+                        return false;
+
+                    }
+                }else
+                {
+
+                    $updatePayment = array(
+                        "paymentDate" => time(),
+                        "payOnlineV" => $ResCode,
+                        "paymentcodesale" => $RefId,
+                        'payment_describes'=>$payment->payment_describes.'<br>'.$POST['State'].'- er عدم پرداخت :'.$ResCode,
+                    );
+                    Payments::updateAll($updatePayment,['paymentID'=>$saleOrderId]);
+//                    $this->base_model->update_entry('payments', $updatePayment, array("paymentID" => $saleOrderId));
+
+                    return false;
+                }
+
+            }
+            else
+            {
+                return false;
+            }
+        }else
+        {
+            return false;
+        }
+    }
+
+    public static function maketicket($id)
+    {
+        if ($allticket = Tickets::find()->where(['id' => $id,'status'=>5])->one())
+        {
+            $insertOrder2 = array(
+                "status" => 6 ,
+            );
+//            $this->base_model->update_entry('irtour_tickets', $insertOrder2, array('id' => $id ));
+            Tickets::updateAll($insertOrder2,['id' => $id]);
+
+//            var_dump($allticket);
+
+            $data = array(
+                'id_request'=>  $allticket->passenger_sepehr,
+                'id_faktor'=>  $allticket->random,
+            );
+
+            $final1 = (new f724())->maketicket($data);
+//            var_dump($final1);
+            if ($final1['resutl'])
+            {
+                if ($final1['data']->pnrid_request != 101 && $final1['data']->pnrid_request != 98)
+                {
+                    $insertOrder2 = array(
+                        "pnr" => $final1['data']->pnrid_request ,
+                        "status" => 10 ,
+                        "temps" => serialize($final1) ,
+                        "pdflink" =>  $final1['data']->linkticket ,
+                    );
+
+//                    $this->base_model->update_entry('irtour_tickets', $insertOrder2, array('id' => $id ));
+                    Tickets::updateAll($insertOrder2,["id"=>$id]);
+//                    $allticket_pass = $this->base_model->get_st_array('irtour_ticket_passengers', array('ticket_id' => $id), '*');
+                    $allticket_pass = Passengers::find()->where(['ticket_id' => $id])->all();
+
+                    foreach ($allticket_pass as $p)
+                    {
+                        foreach ($final1['data']->passenger_info as $p1) {
+                            if (strtolower($p->ename)== $p1->fname && strtolower($p->efamily) == $p1->lname)
+                            {
+                                Passengers::updateAll(['ticket_number'=>$p1->ticket_number,'pnr'=>$final1['data']->pnrid_request],['id' => $p->id]);
+                            }
+                        }
+                    }
+                    \app\components\SendSms::sms($allticket->mobile,(new StaticData())->check_city($allticket->from),(new StaticData())->check_city($allticket->to),jdate('Y/m/d',strtotime($allticket->tdate),'','','en'));
+                }
+                else
+                {
+                    $insertOrder2 = array(
+                        "status" => 9 ,
+                        "temps" => serialize($final1) ,
+                    );
+                    Tickets::updateAll($insertOrder2,["id"=>$id]);
+//                    $this->base_model->update_entry('irtour_tickets', $insertOrder2, array('id' => $id ));
+                    $message= '101 بلیط '."\r\n".'رفت رو هوا';
+                    \app\components\SendSms::sms_only('09352605759',$message);
+                }
+            }
+            else
+            {
+                $insertOrder2 = array(
+                    "status" => 9 ,
+                    "temps" => serialize($final1) ,
+                );
+                Tickets::updateAll($insertOrder2,["id"=>$id]);
+//                $this->base_model->update_entry('irtour_tickets', $insertOrder2, array('id' => $id ));
+                $message= ' بلیط '."\r\n".'رفت رو هوا';
+                \app\components\SendSms::sms_only('09352605759',$message);
+//                $this->base_model->sms_only('09352605759',$message);
+            }
+        }
+    }
+
+
 
 }
