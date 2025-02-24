@@ -16,6 +16,7 @@ $config = [
     'aliases' => [
         '@bower' => '@vendor/bower-asset',
         '@npm' => '@vendor/npm-asset',
+        '@nusoap' => '@app/components/nosoap/Nusoap.php',
     ],
     'components' => [
         'notify' => [

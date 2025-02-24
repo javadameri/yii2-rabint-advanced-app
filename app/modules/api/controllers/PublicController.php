@@ -544,7 +544,7 @@ class PublicController extends Controller
             }
 
 //            $this->session->set_flashdata('msgER', 'پرداخت موفق');
-            $url  = ['/flight-in-tickets/order/ticket-successfull',"verify"=>$verify,"peymentID"=>$pay->peymentAmountD];
+            $url  = 'https://bl.6or.ir/flight-in-tickets/order/ticket-successfull?verify='.$verify.'&peymentID='.$pay->peymentAmountD;
             redirect($url);
             exit;
         }
@@ -555,12 +555,18 @@ class PublicController extends Controller
 //            $this->session->set_flashdata('msgER', 'پرداخت ناموفق دوباره تلاش کنید');
 //            redirect(base_url('flights/ticket/'.$verify.'/'.$pay->peymentAmountD));
 
-            $url  = 'http://192.168.1.13/flight-in-tickets/order/ticket-unsuccessfull?verify='.$verify.'&peymentID='.$pay->peymentAmountD;
+            $url  = 'https://bl.6or.ir/flight-in-tickets/order/ticket-unsuccessfull?verify='.$verify.'&peymentID='.$pay->peymentAmountD;
             redirect($url);
 //            return $this->redirect($url);
             exit;
         }
     }
+
+    public function actionGetData($verify,$id){
+        $ticket = Tickets::findOne(["payID"=>$verify]);
+        return $ticket->pdflink;
+    }
+
 
 
 }

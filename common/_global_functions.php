@@ -444,7 +444,7 @@ function getTokenSaman($sep_MID,$sep_Amount,$sep_ResNum,$sep_RedirectURL,$sep_Ce
 function requestVer($verifySaleReferenceId,$userPasswordsaman,$MTID,$amount)
 {
 //    ini_set('display_errors', 1); ini_set('display_startup_errors', 1); error_reporting(E_ALL);
-    @require_once(APPPATH."/libraries/lib/Nusoap.php");
+//    require_once Yii::getAlias('@nusoap');
 //    var_dump(22);
 //    exit;
     $Status['er']='';
@@ -453,7 +453,18 @@ function requestVer($verifySaleReferenceId,$userPasswordsaman,$MTID,$amount)
 
 //  $soapclient = @new nusoap_client('https://acquirer.samanepay.com/payments/referencepayment.asmx?WSDL','wsdl');
     //$soapclient = @new nusoap_client('https://sep.shaparak.ir/payments/referencepayment.asmx?WSDL','wsdl');
-    $soapclient = @new nusoap_client('https://verify.sep.ir/Payments/ReferencePayment.asmx?WSDL','wsdl');
+
+//    require_once Yii::getAlias('@app/components/nusoap/Nusoap.php');
+//use app\components\nusoap\nusoap_client;
+    $soapclient = new nusoap_client('https://verify.sep.ir/Payments/ReferencePayment.asmx?WSDL','wsdl');
+//    $soapclient = @nusoap_client('https://verify.sep.ir/Payments/ReferencePayment.asmx?WSDL','wsdl');
+
+    // تعریف آدرس WSDL
+//    $wsdl = 'https://verify.sep.ir/Payments/ReferencePayment.asmx?WSDL';
+
+// ایجاد شیء nusoap_client برای ارتباط با وب‌سرویس
+//    $soapclient = new nusoap_client($wsdl, 'wsdl');
+
     $soapProxy = $soapclient->getProxy();
     $res=  $soapProxy->VerifyTransaction($verifySaleReferenceId,$MTID);
 

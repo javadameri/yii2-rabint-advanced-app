@@ -368,7 +368,7 @@ class Payments extends \yii\db\ActiveRecord
                             }
                         }
                     }
-                    \app\components\SendSms::sms($allticket->mobile,(new StaticData())->check_city($allticket->from),(new StaticData())->check_city($allticket->to),jdate('Y/m/d',strtotime($allticket->tdate),'','','en'));
+                    \app\components\SendSMS::sms($allticket->mobile,(new StaticData())->check_city($allticket->from),(new StaticData())->check_city($allticket->to),jdate('Y/m/d',strtotime($allticket->tdate),'','','en'));
                 }
                 else
                 {
@@ -379,7 +379,7 @@ class Payments extends \yii\db\ActiveRecord
                     Tickets::updateAll($insertOrder2,["id"=>$id]);
 //                    $this->base_model->update_entry('irtour_tickets', $insertOrder2, array('id' => $id ));
                     $message= '101 بلیط '."\r\n".'رفت رو هوا';
-                    \app\components\SendSms::sms_only('09352605759',$message);
+                    \app\components\SendSMS::sms_only('09352605759',$message);
                 }
             }
             else

@@ -375,6 +375,9 @@ class SiteController extends \rabint\controllers\DefaultController
 
     public function actionT(){
 
+        \app\components\SendSMS::sms("09366133558","aaa","bbb","1403/12/03");
+exit();
+
         $filePath = Yii::getAlias("@base/../../blitinja.com/public_html/application/models/Flight724_model.php");
 
 //        $search = '172.charter725.ir'; // متن مورد جستجو
