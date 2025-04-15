@@ -3,8 +3,10 @@
 namespace app\controllers;
 
 use app\components\f724;
+use app\components\kavenegar;
 use app\modules\structurer\models\Data;
 use phpseclib3\Net\SFTP;
+use rabint\notify\models\Notification;
 use Yii;
 
 class SiteController extends \rabint\controllers\DefaultController
@@ -375,6 +377,18 @@ class SiteController extends \rabint\controllers\DefaultController
 
     public function actionT(){
 
+//        $r=Yii::$app->notify->send(
+//            5,
+//            "تست",
+//            null,
+//            ['priority' => Notification::MEDIA_SMS]
+//        );
+//        var_dump($r);
+
+
+//        return (new kavenegar("3553546C423131534E6A724F64465946384137326F6B46733955715A6D5A4E30"))->VerifyLookup("09366133558","22222","activecode");
+
+        exit('s');
         \app\components\SendSMS::sms("09366133558","aaa","bbb","1403/12/03");
 exit();
 

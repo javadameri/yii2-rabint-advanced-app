@@ -60,19 +60,19 @@ $baseConf = [
             ]
         ],
         'sms' => [
-            "serviceClass" => "\rabint\classes\sms\webservice\sms3300",
+            "serviceClass" => "\rabint\services\sms\webservic\niksms",
             "serviceConfig" => [
-                "from" => "9800098708725220",
-                "username" => "rabint_app",
-                "password" => "452j76tf4",
+                "from" => "50002660",
+                "username" => "09153119036",
+                "password" => "Anvar0910",
             ]
         ],
         'qeuee' => [
-            "serviceClass" => "\rabint\classes\sms\webservice\sms3300",
+            "serviceClass" => "\rabint\services\sms\webservic\niksms",
             "serviceConfig" => [
-                "from" => "9800098708725220",
-                "username" => "rabint_app",
-                "password" => "452j76tf4",
+                "from" => "50002660",
+                "username" => "09153119036",
+                "password" => "Anvar0910",
             ]
         ],
     ],
@@ -96,7 +96,7 @@ $baseConf = [
         'unprotectedBasePath' => '@app/web',
         // path in a directory of upload
         'uploadSubDirPath' => 'upload',
-        'userCanUpload' => 'user', //'contributor',
+        'userCanUpload' => 'guest', //'contributor',
         'presets' => [
             'global' => [
                 'tiny' => [50, 50, 'normal'],

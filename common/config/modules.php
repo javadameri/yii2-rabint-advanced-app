@@ -17,7 +17,7 @@ return [
         'class' => 'rabint\pm\pm'
     ],
     'user' => [
-        'class' => 'rabint\user\Module',
+        'class' => 'app\modules\user\Module',
     ],
     'notify' => [
         'class' => 'rabint\notify\Module',

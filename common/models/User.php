@@ -9,7 +9,7 @@
 namespace common\models;
 
 
-class User extends \rabint\user\models\User
+class User extends \app\modules\user\models\User
 {
 
     /* maturity */

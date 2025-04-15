@@ -58,11 +58,11 @@ return [
             ]
         ],
         'sms' => [
-            "serviceClass" => "\rabint\classes\sms\webservice\sms3300",
+            "serviceClass" => \app\components\kavenegar::class,
             "serviceConfig" => [
-                "from" => "9800098708725220",
-                "username" => "rabint_app",
-                "password" => "asdasdasdasd",
+                "debug" => true,
+//                "from" => null,
+                "apiKey" => "3553546C423131534E6A724F64465946384137326F6B46733955715A6D5A4E30",
             ]
         ],
     ],
@@ -86,7 +86,7 @@ return [
         'unprotectedBasePath' => '@app/web',
         // path in a directory of upload
         'uploadSubDirPath' => 'upload',
-        'userCanUpload' => 'user', //'contributor',
+        'userCanUpload' => 'guest', //'contributor',
         'presets' => [
             'global' => [
                 'tiny' => [50, 50, 'normal'],

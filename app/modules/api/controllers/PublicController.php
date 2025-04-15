@@ -4,15 +4,23 @@ namespace app\modules\api\controllers;
 
 
 use app\components\f724;
+use app\components\kavenegar;
 use app\components\StaticData;
+use common\models\HeadOrderTrainOffline;
+use common\models\ItemOrderTrainOffline;
 use common\models\Language;
 use common\models\Passengers;
 use common\models\Payments;
 use common\models\Tickets;
+use common\models\TrainStation;
+use rabint\attachment\actions\UploadAction;
+use rabint\attachment\models\Tmpupload;
 use rabint\option\models\Option;
 use yii\helpers\Url;
 use yii\rest\Controller;
 use Yii;
+use yii\web\BadRequestHttpException;
+use yii\web\ForbiddenHttpException;
 
 class PublicController extends Controller
 {
@@ -33,6 +41,30 @@ class PublicController extends Controller
                 ],
             ],
         ]);
+    }
+
+
+    public function actions()
+    {
+        return [
+            'file-upload' => [
+                'class' => UploadAction::class,
+                'modelName' => Tmpupload::class,
+                'attribute' => 'attachment_id',
+                // the type of the file (`image` or `file`)
+                'type' => 'file',
+                'inputName' => 'file',
+                'guestCanUpload'=>"guest"
+            ],
+//            'wysiwyg-upload' => [
+//                'class' => UploadRedactorAction::class,
+//                'modelName' => Tmpupload::class,
+//                'attribute' => 'attachment_id',
+//                'inputName' => 'file',
+//                // the type of the file (`image` or `file`)
+//                'type' => 'file',
+//            ],
+        ];
     }
 
 
@@ -566,6 +598,74 @@ class PublicController extends Controller
         $ticket = Tickets::findOne(["payID"=>$verify]);
         return $ticket->pdflink;
     }
+
+
+
+    public function actionTranStation($q=null){
+        $models = TrainStation::find()->filterWhere(["like","name",$q])->all();
+        return $models;
+    }
+
+
+    public function actionSaveTrain(){
+        $post = Yii::$app->request->post();
+        if(empty($post)) {
+            throw new BadRequestHttpException();
+        }
+        $head = new HeadOrderTrainOffline();
+        $head->date = $post["departureDate"];
+        $head->description = $post["description"];
+        $head->to = $post["destination"]['id'];
+        $head->from = $post["origin"]['id'];
+        $head->cell = $post["phoneNumber"];
+        $head->code = strval(rand(1000,9999));
+        $head->full_name = $post["referrer"];
+        $head->type = json_encode($post["trainType"]);
+        $head->status = HeadOrderTrainOffline::STATUS_DRAFT;
+        if(!$head->save()){
+            var_dump($head->errors);exit();
+        }
+        foreach ($post['passengers'] as $item){
+                $m = new ItemOrderTrainOffline();
+                $m->order_id = $head->id;
+                $m->birthdate = $item["birthDate"];
+                $m->full_name = $item["fullName"];
+                $m->melli_code = $item["nationalCode"];
+                $m->client_type = $item["passengerType"];
+                $m->shahed_cart = json_decode($item["witnessImages"])->front;
+                $m->shahed_back = json_decode($item["witnessImages"])->back;
+                $m->save();
+                if(!$m->save()){
+                    var_dump($head->errors);exit();
+                }
+        }
+
+
+        (new kavenegar("3553546C423131534E6A724F64465946384137326F6B46733955715A6D5A4E30"))->VerifyLookup($head->cell,$head->code,"activecode");
+
+
+        return $head->id;
+    }
+
+    public function actionCheckToken($id,$token){
+        $model = HeadOrderTrainOffline::findOne($id);
+        $key="code_offline".$id;
+        $count = Yii::$app->cache->get($key)?:0;
+        if($count>10)
+            return false;
+        Yii::$app->cache->set($key,$count+1,1000);
+
+        if($model->code==$token&&$model->status==HeadOrderTrainOffline::STATUS_DRAFT){
+            $model->status=HeadOrderTrainOffline::STATUS_ACTIVE;
+             $model->save();
+             return true;
+        }
+        return false;
+    }
+
+
+
+
 
 
 

@@ -9,7 +9,7 @@
 namespace common\models;
 
 
-class UserProfile extends \rabint\user\models\UserProfile
+class UserProfile extends \app\modules\user\models\UserProfile
 {
 
 }

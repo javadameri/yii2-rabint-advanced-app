@@ -214,11 +214,12 @@ if (YII_DEBUG) {
  * GII config
  * --------------------------------------------------------------------------------
  */
-if (YII_ENV_DEV) {
+if (YII_ENV_DEV||true) {
     $allowedIPs = array_map('trim', explode(',', config('debugersIp')));
     $config['modules']['gii'] = [
         'class' => 'yii\gii\Module',
-        'allowedIPs' => array_merge(['127.0.0.1', '::1'], $allowedIPs),
+//        'allowedIPs' => array_merge(['127.0.0.1', '::1'], $allowedIPs),
+        'allowedIPs' => ['37.32.16.6'],
         'generators' => [
             'crud' => [
                 'class' => 'yii\gii\generators\crud\Generator',

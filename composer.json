@@ -24,6 +24,7 @@
 		"yiisoft/yii2-bootstrap4": "^2.0",
 		"rabint/base": "^1.0",
 		"rabint/attachment": "^1.0",
+		"rabint/finance": "^1.2.1",
 		"rabint/contact": "^1.0",
 		"rabint/option": "^1.0",
 		"rabint/page": "^1.0",

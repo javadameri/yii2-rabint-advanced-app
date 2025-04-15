@@ -26,6 +26,7 @@ return [
                         ['label' => Yii::t('app', 'ربات ها'), 'url' => ['/admin-robot']],
                         ['label' => Yii::t('app', 'شهرها'), 'url' => ['/admin-city']],
                         ['label' => Yii::t('app', 'درخواست ها'), 'url' => ['/admin-reserve-requests']],
+                        ['label' => Yii::t('app', 'درخواست های قطار'), 'url' => ['/admin-head-order-train-offline']],
         //                '<li class="divider" role=>"separator"></li>',
         //                ['label' => Yii::t('app', 'services(proxy & ...)'), 'url' => ['/admin-service/index']],
         //                ['label' => Yii::t('app', 'accounts'), 'url' => ['/admin-account/index']],
