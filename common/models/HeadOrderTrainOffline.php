@@ -22,6 +22,8 @@ use common\models\User;
     * @property integer $price
     * @property integer $transaction_id
     * @property integer $ticket_file
+    * @property integer $model
+    * @property integer $travel_time
     * @property integer $request_type
     * @property integer $reserve_time
     * @property integer $created_at
@@ -46,6 +48,11 @@ const STATUS_CANCELED = 4;//کنسل شده
         1=>"عادی",
         2=>"شاهد",
         3=>"اتباع",
+    ];
+
+    const MODEL=[
+        1=>"قطار",
+        2=>"پرواز"
     ];
 
 /**
@@ -111,7 +118,7 @@ public function rules()
 return [
             [['full_name', 'cell', 'code', 'description', 'user_id', 'from', 'to', 'date', 'type', 'status', 'price', 'transaction_id', 'ticket_file', 'request_type', 'created_at', 'updated_at', 'created_by', 'updated_by'], 'default', 'value' => null],
             [['description'], 'string'],
-            [['user_id', 'from', 'to', 'status', 'price', 'transaction_id', 'ticket_file', 'request_type', 'created_at', 'updated_at', 'created_by', 'updated_by','reserve_time'], 'integer'],
+            [['user_id', 'from', 'to', 'status', 'price', 'transaction_id', 'ticket_file', 'request_type', 'created_at', 'updated_at', 'created_by', 'updated_by','reserve_time','model','travel_time'], 'integer'],
             [['full_name', 'cell', 'date', 'type'], 'string', 'max' => 255],
             [['code'], 'string', 'max' => 50],
             [['transaction_id'], 'exist', 'skipOnError' => true, 'targetClass' => FinanceTransactions::class, 'targetAttribute' => ['transaction_id' => 'id']],
@@ -138,6 +145,8 @@ return [
     'price' => Yii::t('rabint', 'قیمت'),
     'transaction_id' => Yii::t('rabint', 'فاکتور'),
     'ticket_file' => Yii::t('rabint', 'فایل بلیت'),
+    'model' => Yii::t('rabint', 'نوع بلیت'),
+    'travel_time' => Yii::t('rabint', 'تعداد روز سفر'),
     'reserve_time' => Yii::t('rabint', 'زمان انجام رزرو'),
     'request_type' => Yii::t('rabint', 'نوع درخواست'),
     'created_at' => Yii::t('rabint', 'ایجاد شده در'),
@@ -166,10 +175,31 @@ public function afterSave($insert, $changedAttributes)
     if($this->status==self::STATUS_ACTIVE){
 
         $token = 'bot195910:1372ccc9-0d72-45e4-8d28-0f2b8d62b834';
-        $chat_id = 10561026;
+        $travelTimes="";
+        $type="";
 
-        $from = TrainStation::findOne($this->from)->name;
-        $to = TrainStation::findOne($this->to)->name;
+
+        switch ($this->model){
+            case 1:
+                $chat_id = 10563611;
+                $from = TrainStation::findOne($this->from)->name;
+                $to = TrainStation::findOne($this->to)->name;
+                $type = "نوع قطار:$this->type";
+                break;
+            case 2:
+                $chat_id = 10565913;
+                $from = City::findOne($this->from)->name;
+                $to = City::findOne($this->to)->name;
+                break;
+            case 3:
+                $chat_id = 10576464;
+                $from = City::findOne($this->from)->name;
+                $to = City::findOne($this->to)->name;
+                $travelTimes = "تعداد روزهای مسافرت:$this->travel_time";
+                break;
+            default:
+
+        }
 
         $caption = <<<EOL
 درخواست جدید:
@@ -177,7 +207,8 @@ public function afterSave($insert, $changedAttributes)
 مبدا:$from
 مقصد:$to
 تاریخ حرکت:$this->date
-نوع قطار:$this->type
+$type
+$travelTimes
 معرف:$this->full_name
 شماره تماس:$this->cell
 توضیحات:$this->description

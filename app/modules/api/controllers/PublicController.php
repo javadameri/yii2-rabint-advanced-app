@@ -6,6 +6,7 @@ namespace app\modules\api\controllers;
 use app\components\f724;
 use app\components\kavenegar;
 use app\components\StaticData;
+use common\models\City;
 use common\models\HeadOrderTrainOffline;
 use common\models\ItemOrderTrainOffline;
 use common\models\Language;
@@ -605,6 +606,10 @@ class PublicController extends Controller
         $models = TrainStation::find()->filterWhere(["like","name",$q])->all();
         return $models;
     }
+    public function actionFlightStation($q=null){
+        $models = City::find()->filterWhere(["like","name",$q])->all();
+        return $models;
+    }
 
 
     public function actionSaveTrain(){
@@ -618,9 +623,11 @@ class PublicController extends Controller
         $head->to = $post["destination"]['id'];
         $head->from = $post["origin"]['id'];
         $head->cell = $post["phoneNumber"];
+        $head->model = $post["model"]??1;
         $head->code = strval(rand(1000,9999));
         $head->full_name = $post["referrer"];
         $head->type = json_encode($post["trainType"]);
+        $head->travel_time = $post["travelTime"];
         $head->status = HeadOrderTrainOffline::STATUS_DRAFT;
         if(!$head->save()){
             var_dump($head->errors);exit();
@@ -634,7 +641,7 @@ class PublicController extends Controller
                 $m->client_type = $item["passengerType"];
                 $m->shahed_cart = json_decode($item["witnessImages"])->front;
                 $m->shahed_back = json_decode($item["witnessImages"])->back;
-                $m->save();
+//                $m->save();
                 if(!$m->save()){
                     var_dump($head->errors);exit();
                 }
